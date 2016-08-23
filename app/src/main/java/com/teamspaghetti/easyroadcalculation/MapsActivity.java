@@ -35,7 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         easyRouteCalculation = new EasyRouteCalculation(this,mMap);
         easyRouteCalculation.gotoMyLocation(true);
-        easyRouteCalculation.calculateRouteBetweenTwoPoints(new LatLng(39.99105,32.74136),new LatLng(39.96142,32.73447));
+        easyRouteCalculation.getDistanceBetweenPoints(new LatLng(39.99105,32.74136),new LatLng(39.96142,32.73447));
 
     }
     @Override

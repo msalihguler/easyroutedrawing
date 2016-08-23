@@ -33,7 +33,6 @@ public class DirectionsJSONParser {
             for(int i=0;i<jRoutes.length();i++){
                 jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<HashMap<String, String>>();
-                Log.e("distance",jLegs.getJSONObject(0).getJSONObject("distance").getString("text"));
                 /** Traversing all legs */
                 for(int j=0;j<jLegs.length();j++){
                     jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
@@ -99,5 +98,18 @@ public class DirectionsJSONParser {
         }
 
         return poly;
+    }
+    public String getDistance(JSONObject jObject){
+        JSONArray jRoutes = null;
+        String distance = "";
+        try {
+            jRoutes = jObject.getJSONArray("routes");
+
+            Log.e("distance", ( (JSONObject)jRoutes.get(0)).getJSONArray("legs")
+                    .getJSONObject(0).getJSONObject("distance").getString("text"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return distance;
     }
 }

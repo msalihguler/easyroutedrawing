@@ -9,6 +9,7 @@ import android.util.Log;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.teamspaghetti.easyroutecalculation.TravelMode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +28,12 @@ public class CalculateRouteBetweenPoints {
     PolylineOptions polylineOptions;
     String mode;
 
+    public CalculateRouteBetweenPoints(LatLng origin, LatLng dest, Context context,String mode){
+        this.origin = origin;
+        this.dest = dest;
+        this.context = context;
+        this.mode = mode;
+    }
     public CalculateRouteBetweenPoints(GoogleMap map, LatLng origin, LatLng dest, Context context, int lineColor, int lineWidth,String mode){
         this.googleMap = map;
         this.origin = origin;
@@ -39,6 +46,15 @@ public class CalculateRouteBetweenPoints {
     }
 
     public void getDirectionsUrl() throws IOException {
+
+        String url = prepareAddress();
+
+        DownloadTask downloadTask = new DownloadTask();
+
+        downloadTask.execute(url);
+    }
+
+    public String prepareAddress(){
 
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
@@ -57,11 +73,9 @@ public class CalculateRouteBetweenPoints {
 
         // Building the url to the web service
         String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&mode="+mode;
-        DownloadTask downloadTask = new DownloadTask();
 
-        downloadTask.execute(url);
+        return url;
     }
-
     // Fetches data from url passed
     public class DownloadTask extends AsyncTask<String, Void, String> {
 

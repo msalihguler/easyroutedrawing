@@ -3,6 +3,7 @@ package com.teamspaghetti.easyroutecalculation;
 import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,6 +12,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamspaghetti.easyroutecalculation.listeners.LocationReadyCallback;
 import com.teamspaghetti.easyroutecalculation.locationoperations.CurrentLocationProvider;
 import com.teamspaghetti.easyroutecalculation.mapoperations.CalculateRouteBetweenPoints;
+import com.teamspaghetti.easyroutecalculation.mapoperations.DirectionsJSONParser;
+
+import org.json.JSONObject;
+
 import java.io.IOException;
 
 /**
@@ -29,8 +34,10 @@ public class EasyRouteCalculation implements LocationReadyCallback {
             _context = context;
             provider = new CurrentLocationProvider(context,this);
         }
-        else
+        else {
+            _context = context;
             Utils.createDialogForOpeningGPS(context);
+        }
     }
 
     public EasyRouteCalculation(Context context, GoogleMap map){
@@ -123,4 +130,22 @@ public class EasyRouteCalculation implements LocationReadyCallback {
         gotoMyLocationEnabled = isEnabled;
     }
 
+    public void getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation,String mode){
+        final CalculateRouteBetweenPoints crbp = new CalculateRouteBetweenPoints(startLocation,targetLocation,_context,mode);
+        final String url = crbp.prepareAddress();
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                try {
+                    new DirectionsJSONParser().getDistance(new JSONObject(crbp.downloadUrl(url)));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
+    }
+    public void getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation){
+        getDistanceBetweenPoints(startLocation,targetLocation,TravelMode.WALKING);
+    }
 }
