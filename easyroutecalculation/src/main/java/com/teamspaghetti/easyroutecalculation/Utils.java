@@ -10,6 +10,7 @@ import android.support.v7.app.AlertDialog;
  * Created by Salih on 22.08.2016.
  */
 public class Utils {
+
     public static  boolean isGPSEnabled(Context context){
         LocationManager locationManager = (LocationManager)
                 context.getSystemService(Context.LOCATION_SERVICE);

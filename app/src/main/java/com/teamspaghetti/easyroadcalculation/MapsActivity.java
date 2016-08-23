@@ -10,7 +10,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamspaghetti.easyroutecalculation.EasyRouteCalculation;
-import com.teamspaghetti.easyroutecalculation.LocationReadyCallback;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -37,7 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onMapClick(LatLng latLng) {
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(latLng).title("POSSS"));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20.0f));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,12.0f));
                 easyRouteCalculation.calculateRouteFromMyLocation(latLng);
             }
         });

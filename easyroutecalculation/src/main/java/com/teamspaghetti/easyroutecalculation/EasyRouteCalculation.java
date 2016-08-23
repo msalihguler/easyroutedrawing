@@ -1,14 +1,16 @@
 package com.teamspaghetti.easyroutecalculation;
 
 import android.content.Context;
-import android.location.LocationManager;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.teamspaghetti.easyroutecalculation.listeners.LocationReadyCallback;
+import com.teamspaghetti.easyroutecalculation.locationoperations.CurrentLocationProvider;
+import com.teamspaghetti.easyroutecalculation.mapoperations.CalculateRouteBetweenPoints;
+
+import java.io.IOException;
 
 /**
  * Created by Salih on 22.08.2016.
@@ -19,9 +21,10 @@ public class EasyRouteCalculation implements LocationReadyCallback {
     CurrentLocationProvider provider;
     Boolean isLocationReady = false;
     GoogleMap map;
-
+    Context _context;
     public EasyRouteCalculation(Context context){
         if(isGPSEnabled(context)) {
+            _context = context;
             provider = new CurrentLocationProvider(context,this);
         }
         else
@@ -29,6 +32,7 @@ public class EasyRouteCalculation implements LocationReadyCallback {
     }
     public EasyRouteCalculation(Context context, GoogleMap map){
         if(Utils.isGPSEnabled(context)) {
+            _context = context;
             provider = new CurrentLocationProvider(context,this);
             this.map = map;
         }
@@ -37,11 +41,16 @@ public class EasyRouteCalculation implements LocationReadyCallback {
     }
 
     public void calculateRouteFromMyLocation(LatLng targetLocation){
+        myLocation = getCurrentLocation();
         calculateRouteFromMyLocation(myLocation,targetLocation);
     }
 
     private void calculateRouteFromMyLocation(LatLng myLocation, LatLng targetLocation){
-
+        try {
+            new CalculateRouteBetweenPoints(map,myLocation,targetLocation,_context).getDirectionsUrl();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public LatLng getCurrentLocation(){
