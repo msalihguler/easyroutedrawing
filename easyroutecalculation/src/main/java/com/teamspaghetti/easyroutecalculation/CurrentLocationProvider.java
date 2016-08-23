@@ -28,7 +28,12 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
     private LocationManager locationManager;
     private LocationRequest mLocationRequest;
     private Context _context;
-    public CurrentLocationProvider(Context context){
+    private double latitude,longitude;
+    private LatLng location;
+    private LocationReadyCallback locationReadyCallback;
+
+    public CurrentLocationProvider(Context context,LocationReadyCallback locationReadyCallback){
+
         _context = context;
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addConnectionCallbacks(this)
@@ -36,10 +41,14 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
                 .addApi(LocationServices.API)
                 .build();
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        this.locationReadyCallback = locationReadyCallback;
+        mGoogleApiClient.connect();
 
     }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+
         if (ActivityCompat.checkSelfPermission(_context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(_context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -50,17 +59,24 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
             // for ActivityCompat#requestPermissions for more details.
             return;
         } startLocationUpdates();
+
         mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if(mLocation == null){
             startLocationUpdates();
         }
+
         if (mLocation != null) {
-            double latitude = mLocation.getLatitude();
-            double longitude = mLocation.getLongitude();
-            Log.e("lat", String.valueOf(latitude));
-            Log.e("longi",String.valueOf(longitude));
+
+            latitude = mLocation.getLatitude();
+            longitude = mLocation.getLongitude();
+            setLocation(new LatLng(latitude,longitude));
+            locationReadyCallback.locationReadyCallback(true);
+
         } else {
+
             Toast.makeText(_context, "Location not Detected", Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -76,14 +92,16 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
 
     @Override
     public void onLocationChanged(Location location) {
-
+        Log.e("location", String.valueOf(location.getLatitude()));
     }
     protected void startLocationUpdates() {
+
         // Create the location request
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(3000)
                 .setFastestInterval(1000);
+
         // Request location updates
         if (ActivityCompat.checkSelfPermission(_context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(_context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -95,13 +113,18 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 mLocationRequest, this);
         Log.d("reque", "--->>>>");
     }
 
-    public LatLng getCurrentLocation() {
-        mGoogleApiClient.connect();
-        return null;
+    public LatLng getLocation() {
+        return location;
     }
+
+    public void setLocation(LatLng location) {
+        this.location = location;
+    }
+
 }
