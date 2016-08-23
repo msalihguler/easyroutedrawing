@@ -2,8 +2,12 @@ package com.teamspaghetti.easyroutecalculation;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamspaghetti.easyroutecalculation.listeners.LocationReadyCallback;
 import com.teamspaghetti.easyroutecalculation.locationoperations.CurrentLocationProvider;
 import com.teamspaghetti.easyroutecalculation.mapoperations.CalculateRouteBetweenPoints;
@@ -18,6 +22,7 @@ public class EasyRouteCalculation implements LocationReadyCallback {
     Boolean isLocationReady = false;
     GoogleMap map;
     Context _context;
+    Boolean gotoMyLocationEnabled = false;
 
     public EasyRouteCalculation(Context context){
         if(isGPSEnabled(context)) {
@@ -106,6 +111,16 @@ public class EasyRouteCalculation implements LocationReadyCallback {
     @Override
     public void locationReadyCallback(Boolean isReady) {
         isLocationReady=isReady;
+        if(isReady)
+            if(gotoMyLocationEnabled){
+                map.addMarker(new MarkerOptions().position(getCurrentLocation()));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(getCurrentLocation(),12.0f));
+            }
+
+    }
+
+    public void gotoMyLocation(Boolean isEnabled){
+        gotoMyLocationEnabled = isEnabled;
     }
 
 }

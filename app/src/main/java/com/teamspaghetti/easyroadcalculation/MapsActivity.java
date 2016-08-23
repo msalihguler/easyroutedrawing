@@ -1,7 +1,10 @@
 package com.teamspaghetti.easyroadcalculation;
 
+import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -9,6 +12,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamspaghetti.easyroutecalculation.EasyRouteCalculation;
+import com.teamspaghetti.easyroutecalculation.TravelMode;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -30,16 +34,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         easyRouteCalculation = new EasyRouteCalculation(this,mMap);
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                mMap.clear();
-                mMap.addMarker(new MarkerOptions().position(latLng).title("POSSS"));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,12.0f));
-            }
-        });
-    }
+        easyRouteCalculation.gotoMyLocation(true);
+        easyRouteCalculation.calculateRouteBetweenTwoPoints(new LatLng(39.99105,32.74136),new LatLng(39.96142,32.73447));
 
+    }
     @Override
     protected void onResume() {
         super.onResume();

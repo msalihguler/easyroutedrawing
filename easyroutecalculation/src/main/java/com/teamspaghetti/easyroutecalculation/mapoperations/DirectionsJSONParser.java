@@ -1,5 +1,7 @@
 package com.teamspaghetti.easyroutecalculation.mapoperations;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -31,7 +33,7 @@ public class DirectionsJSONParser {
             for(int i=0;i<jRoutes.length();i++){
                 jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<HashMap<String, String>>();
-
+                Log.e("distance",jLegs.getJSONObject(0).getJSONObject("distance").getString("text"));
                 /** Traversing all legs */
                 for(int j=0;j<jLegs.length();j++){
                     jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
