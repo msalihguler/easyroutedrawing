@@ -27,17 +27,19 @@ public class ParserData extends AsyncTask<GoogleMap,String,PolylineOptions> {
     JSONObject routeObject;
     Context context;
     ProgressDialog progressDialog;
+    PolylineOptions polylineOptions;
 
-    public ParserData(String route,Context context){
+    public ParserData(String route,Context context,PolylineOptions polylineOptions){
         this.route = route;
         this.context = context;
+        this.polylineOptions = polylineOptions;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
         progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Downloading URL");
+        progressDialog.setMessage("Parsing Data");
         progressDialog.show();
     }
 
@@ -53,13 +55,10 @@ public class ParserData extends AsyncTask<GoogleMap,String,PolylineOptions> {
         DirectionsJSONParser directionsJSONParser  = new DirectionsJSONParser();
         List<List<HashMap<String, String>>> result = directionsJSONParser.parse(routeObject);
         ArrayList<LatLng> points = null;
-        PolylineOptions lineOptions = null;
-        MarkerOptions markerOptions = new MarkerOptions();
 
         // Traversing through all the routes
         for(int i=0;i<result.size();i++){
             points = new ArrayList<LatLng>();
-            lineOptions = new PolylineOptions();
 
             // Fetching i-th route
             List<HashMap<String, String>> path = result.get(i);
@@ -71,17 +70,14 @@ public class ParserData extends AsyncTask<GoogleMap,String,PolylineOptions> {
                 double lat = Double.parseDouble(point.get("lat"));
                 double lng = Double.parseDouble(point.get("lng"));
                 LatLng position = new LatLng(lat, lng);
-
                 points.add(position);
             }
 
             // Adding all the points in the route to LineOptions
-            lineOptions.addAll(points);
-            lineOptions.width(5);
-            lineOptions.color(Color.RED);
+            polylineOptions.addAll(points);
         }
 
-        return lineOptions;
+        return polylineOptions;
     }
 
     @Override

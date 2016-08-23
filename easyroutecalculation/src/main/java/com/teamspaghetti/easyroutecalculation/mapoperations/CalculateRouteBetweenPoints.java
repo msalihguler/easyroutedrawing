@@ -2,11 +2,14 @@ package com.teamspaghetti.easyroutecalculation.mapoperations;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,12 +24,18 @@ public class CalculateRouteBetweenPoints {
     GoogleMap googleMap;
     LatLng origin,dest;
     Context context;
+    PolylineOptions polylineOptions;
+    String mode;
 
-    public CalculateRouteBetweenPoints(GoogleMap map,LatLng origin, LatLng dest,Context context){
+    public CalculateRouteBetweenPoints(GoogleMap map, LatLng origin, LatLng dest, Context context, int lineColor, int lineWidth,String mode){
         this.googleMap = map;
         this.origin = origin;
         this.dest = dest;
         this.context = context;
+        this.mode = mode;
+        polylineOptions = new PolylineOptions();
+        polylineOptions.width(lineWidth);
+        polylineOptions.color(lineColor);
     }
 
     public void getDirectionsUrl() throws IOException {
@@ -47,7 +56,7 @@ public class CalculateRouteBetweenPoints {
         String output = "json";
 
         // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&mode=walking";
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters + "&mode="+mode;
         DownloadTask downloadTask = new DownloadTask();
 
         downloadTask.execute(url);
@@ -88,7 +97,7 @@ public class CalculateRouteBetweenPoints {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            ParserData parserData = new ParserData(result,context);
+            ParserData parserData = new ParserData(result,context,polylineOptions);
             parserData.execute(googleMap);
             progressDialog.dismiss();
         }

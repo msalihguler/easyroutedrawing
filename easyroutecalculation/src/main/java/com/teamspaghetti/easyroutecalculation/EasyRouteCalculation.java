@@ -1,15 +1,12 @@
 package com.teamspaghetti.easyroutecalculation;
 
 import android.content.Context;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
+import android.graphics.Color;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.teamspaghetti.easyroutecalculation.listeners.LocationReadyCallback;
 import com.teamspaghetti.easyroutecalculation.locationoperations.CurrentLocationProvider;
 import com.teamspaghetti.easyroutecalculation.mapoperations.CalculateRouteBetweenPoints;
-
 import java.io.IOException;
 
 /**
@@ -17,11 +14,11 @@ import java.io.IOException;
  */
 public class EasyRouteCalculation implements LocationReadyCallback {
 
-    LatLng myLocation;
     CurrentLocationProvider provider;
     Boolean isLocationReady = false;
     GoogleMap map;
     Context _context;
+
     public EasyRouteCalculation(Context context){
         if(isGPSEnabled(context)) {
             _context = context;
@@ -30,35 +27,66 @@ public class EasyRouteCalculation implements LocationReadyCallback {
         else
             Utils.createDialogForOpeningGPS(context);
     }
+
     public EasyRouteCalculation(Context context, GoogleMap map){
-        if(Utils.isGPSEnabled(context)) {
+        if(isGPSEnabled(context)) {
             _context = context;
             provider = new CurrentLocationProvider(context,this);
             this.map = map;
         }
         else
             createDialogForOpeningGPS(context);
+
     }
 
     public void calculateRouteFromMyLocation(LatLng targetLocation){
-        myLocation = getCurrentLocation();
-        calculateRouteFromMyLocation(myLocation,targetLocation);
+        calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,Color.RED,5,TravelMode.WALKING);
     }
 
-    private void calculateRouteFromMyLocation(LatLng myLocation, LatLng targetLocation){
+    public void calculateRouteFromMyLocation(LatLng targetLocation,String travelMode){
+        calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,Color.RED,5,travelMode);
+    }
+
+    public void calculateRouteFromMyLocation(LatLng targetLocation,int lineColor,String travelMode){
+        calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,lineColor,5,travelMode);
+    }
+
+    public void calculateRouteFromMyLocation(LatLng targetLocation,int lineColor){
+        calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,lineColor,5,TravelMode.WALKING);
+    }
+
+    public void calculateRouteFromMyLocation(LatLng targetLocation,int lineColor,int lineWidth){
+        calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,lineColor,lineWidth,TravelMode.WALKING);
+    }
+
+    public void calculateRouteBetweenTwoPoints(LatLng startLocation,LatLng targetLocation){
+        calculateRouteBetweenTwoLocations(startLocation,targetLocation,Color.RED,5,TravelMode.WALKING);
+    }
+
+    public void calculateRouteBetweenTwoPoints(LatLng startLocation,LatLng targetLocation,String travelMode){
+        calculateRouteBetweenTwoLocations(startLocation,targetLocation,Color.RED,5,travelMode);
+    }
+
+    public void calculateRouteBetweenTwoPoints(LatLng startLocation,LatLng targetLocation,int lineColor,String travelMode){
+        calculateRouteBetweenTwoLocations(startLocation,targetLocation,lineColor,5,travelMode);
+    }
+
+    public void calculateRouteBetweenTwoPoints(LatLng startLocation,LatLng targetLocation,int lineColor){
+        calculateRouteBetweenTwoLocations(startLocation,targetLocation,lineColor,5,TravelMode.WALKING);
+    }
+
+    public void calculateRouteBetweenTwoPoints(LatLng startLocation,LatLng targetLocation,int lineColor,int lineWidth){
+        calculateRouteBetweenTwoLocations(startLocation,targetLocation,lineColor,lineWidth,TravelMode.WALKING);
+    }
+
+    private void calculateRouteBetweenTwoLocations(LatLng startLocation, LatLng targetLocation,int lineColor,int lineWidth,String travelMode){
         try {
-            new CalculateRouteBetweenPoints(map,myLocation,targetLocation,_context).getDirectionsUrl();
+            new CalculateRouteBetweenPoints(map,startLocation,targetLocation,_context,lineColor,lineWidth,travelMode).getDirectionsUrl();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public LatLng getCurrentLocation(){
-        if(isLocationReady)
-            return provider.getLocation();
-        else
-            return null;
-    }
 
     public boolean isGPSEnabled(Context context){
         return Utils.isGPSEnabled(context);
@@ -68,13 +96,16 @@ public class EasyRouteCalculation implements LocationReadyCallback {
         Utils.createDialogForOpeningGPS(context);
     }
 
+    public LatLng getCurrentLocation(){
+        if(isLocationReady)
+            return provider.getLocation();
+        else
+            return null;
+    }
+
     @Override
     public void locationReadyCallback(Boolean isReady) {
         isLocationReady=isReady;
-        if(isReady){
-            map.addMarker(new MarkerOptions().position(getCurrentLocation()));
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(getCurrentLocation(),12.0f));
-        }
     }
 
 }

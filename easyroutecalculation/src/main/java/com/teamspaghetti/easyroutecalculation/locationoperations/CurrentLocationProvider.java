@@ -29,22 +29,38 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
     private LocationManager locationManager;
     private LocationRequest mLocationRequest;
     private Context _context;
-    private double latitude,longitude;
     private LatLng location;
     private LocationReadyCallback locationReadyCallback;
+    private int interval, fastestInterval;
 
     public CurrentLocationProvider(Context context,LocationReadyCallback locationReadyCallback){
-
         _context = context;
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+        buildApiClient();
+        interval = 10000;
+        fastestInterval = 5000;
+        this.locationReadyCallback = locationReadyCallback;
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        mGoogleApiClient.connect();
+    }
+
+    public CurrentLocationProvider(Context context,LocationReadyCallback locationReadyCallback,int interval){
+        _context = context;
+        buildApiClient();
+        this.interval=interval;
+        this.fastestInterval = 5000;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         this.locationReadyCallback = locationReadyCallback;
         mGoogleApiClient.connect();
+    }
 
+    public CurrentLocationProvider(Context context,LocationReadyCallback locationReadyCallback,int interval,int fastestInterval){
+        _context = context;
+        buildApiClient();
+        this.interval=interval;
+        this.fastestInterval = fastestInterval;
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        this.locationReadyCallback = locationReadyCallback;
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -69,9 +85,7 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
 
         if (mLocation != null) {
 
-            latitude = mLocation.getLatitude();
-            longitude = mLocation.getLongitude();
-            setLocation(new LatLng(latitude,longitude));
+            setLocation(new LatLng(mLocation.getLatitude(),mLocation.getLongitude()));
             locationReadyCallback.locationReadyCallback(true);
 
         } else {
@@ -82,28 +96,21 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
-    }
+    public void onConnectionSuspended(int i) {}
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.e("location", String.valueOf(location.getLatitude()));
     }
     protected void startLocationUpdates() {
 
-        // Create the location request
         mLocationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(3000)
-                .setFastestInterval(1000);
+                .setInterval(interval)
+                .setFastestInterval(fastestInterval);
 
-        // Request location updates
         if (ActivityCompat.checkSelfPermission(_context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(_context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -117,7 +124,6 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 mLocationRequest, this);
-        Log.d("reque", "--->>>>");
     }
 
     public LatLng getLocation() {
@@ -128,4 +134,11 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
         this.location = location;
     }
 
+    private void buildApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(_context)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
 }
