@@ -1,11 +1,7 @@
 package com.teamspaghetti.easyroadcalculation;
 
-import android.location.Location;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,9 +31,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         easyRouteCalculation = new EasyRouteCalculation(this,mMap);
-        easyRouteCalculation.gotoMyLocation(true);
-        Log.e("value",easyRouteCalculation.getDurationBetweenTwoPoints(new LatLng(39.99105,32.74136),new LatLng(39.96142,32.73447),TravelMode.DRIVING));
+        LatLng ankara = new LatLng(39.55,32.51);
+        LatLng izmir = new LatLng(38.25,27.7);
+        LatLng istanbul = new LatLng(41.0,28.58);
+        LatLng antalya = new LatLng(36.52,30.45);
+        LatLng mugla = new LatLng(37.15,28.22);
+        LatLng samsun = new LatLng(41.15,36.22);
+        LatLng sinop = new LatLng(42.,35.11);
 
+        mMap.addMarker(new MarkerOptions().position(samsun));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ankara,6.0f));
+        easyRouteCalculation.addLocation(samsun);
+        easyRouteCalculation.addLocation(sinop);
+        easyRouteCalculation.addLocation(istanbul);
+        easyRouteCalculation.addLocation(izmir);
+        easyRouteCalculation.addLocation(mugla);
+        easyRouteCalculation.addLocation(antalya);
+        easyRouteCalculation.addLocation(ankara);
+
+        easyRouteCalculation.calculateRouteForMultiplePositions();
     }
     @Override
     protected void onResume() {

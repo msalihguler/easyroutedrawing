@@ -1,5 +1,6 @@
 package com.teamspaghetti.easyroutecalculation.mapoperations;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.teamspaghetti.easyroutecalculation.TravelMode;
+import com.teamspaghetti.easyroutecalculation.listeners.RouteCalculationFinishedListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,19 +29,24 @@ public class CalculateRouteBetweenPoints {
     Context context;
     PolylineOptions polylineOptions;
     String mode;
-
-    public CalculateRouteBetweenPoints(LatLng origin, LatLng dest, Context context,String mode){
+    Boolean isLast;
+    RouteCalculationFinishedListener listener;
+    public CalculateRouteBetweenPoints(LatLng origin, LatLng dest, Context context, String mode, Boolean isLast, RouteCalculationFinishedListener listener){
         this.origin = origin;
         this.dest = dest;
         this.context = context;
         this.mode = mode;
+        this.isLast = isLast;
+        this.listener = listener;
     }
-    public CalculateRouteBetweenPoints(GoogleMap map, LatLng origin, LatLng dest, Context context, int lineColor, int lineWidth,String mode){
+    public CalculateRouteBetweenPoints(GoogleMap map, LatLng origin, LatLng dest, Context context, int lineColor, int lineWidth,String mode,Boolean isLast, RouteCalculationFinishedListener listener){
         this.googleMap = map;
         this.origin = origin;
         this.dest = dest;
         this.context = context;
         this.mode = mode;
+        this.isLast = isLast;
+        this.listener = listener;
         polylineOptions = new PolylineOptions();
         polylineOptions.width(lineWidth);
         polylineOptions.color(lineColor);
@@ -79,16 +86,7 @@ public class CalculateRouteBetweenPoints {
     // Fetches data from url passed
     public class DownloadTask extends AsyncTask<String, Void, String> {
 
-        ProgressDialog progressDialog;
 
-        // Downloading data in non-ui thread
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setMessage("Downloading URL");
-            progressDialog.show();
-        }
         @Override
         protected String doInBackground(String... url) {
 
@@ -111,9 +109,8 @@ public class CalculateRouteBetweenPoints {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            ParserData parserData = new ParserData(result,context,polylineOptions);
+            ParserData parserData = new ParserData(result,context,polylineOptions,isLast,listener);
             parserData.execute(googleMap);
-            progressDialog.dismiss();
         }
     }
     public String downloadUrl(String strUrl) throws IOException {

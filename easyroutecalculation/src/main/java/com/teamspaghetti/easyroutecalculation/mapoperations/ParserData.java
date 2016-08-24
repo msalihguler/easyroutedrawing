@@ -2,13 +2,13 @@ package com.teamspaghetti.easyroutecalculation.mapoperations;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.teamspaghetti.easyroutecalculation.listeners.RouteCalculationFinishedListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,21 +26,15 @@ public class ParserData extends AsyncTask<GoogleMap,String,PolylineOptions> {
     String route;
     JSONObject routeObject;
     Context context;
-    ProgressDialog progressDialog;
     PolylineOptions polylineOptions;
-
-    public ParserData(String route,Context context,PolylineOptions polylineOptions){
+    Boolean isLast;
+    RouteCalculationFinishedListener listener;
+    public ParserData(String route,Context context,PolylineOptions polylineOptions,Boolean isLast,RouteCalculationFinishedListener listener){
         this.route = route;
         this.context = context;
         this.polylineOptions = polylineOptions;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Parsing Data");
-        progressDialog.show();
+        this.isLast = isLast;
+        this.listener = listener;
     }
 
     @Override
@@ -84,7 +78,8 @@ public class ParserData extends AsyncTask<GoogleMap,String,PolylineOptions> {
     protected void onPostExecute(PolylineOptions polylineOptions) {
         super.onPostExecute(polylineOptions);
         googleMap.addPolyline(polylineOptions);
-        progressDialog.dismiss();
+        if(isLast)
+            listener.calculationFinished();
     }
 
 }
