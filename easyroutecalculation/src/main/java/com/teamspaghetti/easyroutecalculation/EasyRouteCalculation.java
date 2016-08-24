@@ -161,4 +161,34 @@ public class EasyRouteCalculation implements LocationReadyCallback {
             return null;
         }
     }
+
+    public String getDurationBetweenTwoPoints(LatLng startLocation,LatLng targetLocation,String mode) {
+        final CalculateRouteBetweenPoints crbp = new CalculateRouteBetweenPoints(startLocation,targetLocation,_context,mode);
+        final String url = crbp.prepareAddress();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<String> callable = new Callable<String>() {
+            @Override
+            public String call() throws IOException, JSONException {
+                return new DirectionsJSONParser().getDuration(new JSONObject(crbp.downloadUrl(url)));
+            }
+        };
+        Future<String> future = executor.submit(callable);
+        // future.get() returns 2 or raises an exception if the thread dies, so safer
+        executor.shutdown();
+
+        try {
+            return future.get();
+        }  catch (ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String getDurationBetweenTwoPoints(LatLng startLocation,LatLng targetLocation){
+            return getDurationBetweenTwoPoints(startLocation,targetLocation,TravelMode.WALKING);
+    }
+
 }

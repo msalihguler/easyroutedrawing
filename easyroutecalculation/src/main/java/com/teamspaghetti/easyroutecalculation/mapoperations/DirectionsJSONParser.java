@@ -112,4 +112,18 @@ public class DirectionsJSONParser {
         }
         return distance;
     }
+
+    public String getDuration(JSONObject jObject){
+        JSONArray jRoutes = null;
+        String distance = "";
+        try {
+            jRoutes = jObject.getJSONArray("routes");
+
+            distance = ((JSONObject)jRoutes.get(0)).getJSONArray("legs")
+                    .getJSONObject(0).getJSONObject("duration").getString("text");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return distance;
+    }
 }
