@@ -105,8 +105,8 @@ public class DirectionsJSONParser {
         try {
             jRoutes = jObject.getJSONArray("routes");
 
-            Log.e("distance", ( (JSONObject)jRoutes.get(0)).getJSONArray("legs")
-                    .getJSONObject(0).getJSONObject("distance").getString("text"));
+           distance = ((JSONObject)jRoutes.get(0)).getJSONArray("legs")
+                    .getJSONObject(0).getJSONObject("distance").getString("text");
         }catch (Exception e){
             e.printStackTrace();
         }

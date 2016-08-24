@@ -2,9 +2,6 @@ package com.teamspaghetti.easyroutecalculation;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
-import android.util.Log;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -14,9 +11,15 @@ import com.teamspaghetti.easyroutecalculation.locationoperations.CurrentLocation
 import com.teamspaghetti.easyroutecalculation.mapoperations.CalculateRouteBetweenPoints;
 import com.teamspaghetti.easyroutecalculation.mapoperations.DirectionsJSONParser;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by Salih on 22.08.2016.
@@ -130,22 +133,32 @@ public class EasyRouteCalculation implements LocationReadyCallback {
         gotoMyLocationEnabled = isEnabled;
     }
 
-    public void getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation,String mode){
+    public String getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation,String mode) throws ExecutionException, InterruptedException {
         final CalculateRouteBetweenPoints crbp = new CalculateRouteBetweenPoints(startLocation,targetLocation,_context,mode);
         final String url = crbp.prepareAddress();
-        new Thread(new Runnable(){
-            @Override
-            public void run() {
-                try {
-                    new DirectionsJSONParser().getDistance(new JSONObject(crbp.downloadUrl(url)));
-                } catch (Exception e) {
-                    e.printStackTrace();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Callable<String> callable = new Callable<String>() {
+                @Override
+                public String call() throws IOException, JSONException {
+                    return new DirectionsJSONParser().getDistance(new JSONObject(crbp.downloadUrl(url)));
                 }
-            }
-        }).start();
+            };
+            Future<String> future = executor.submit(callable);
+            // future.get() returns 2 or raises an exception if the thread dies, so safer
+            executor.shutdown();
 
+        return future.get();
     }
-    public void getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation){
-        getDistanceBetweenPoints(startLocation,targetLocation,TravelMode.WALKING);
+
+    public String getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation){
+        try {
+            return getDistanceBetweenPoints(startLocation,targetLocation,TravelMode.WALKING);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
