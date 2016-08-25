@@ -31,6 +31,7 @@ public class CalculateRouteBetweenPoints {
     String mode;
     Boolean isLast;
     RouteCalculationFinishedListener listener;
+
     public CalculateRouteBetweenPoints(LatLng origin, LatLng dest, Context context, String mode, Boolean isLast, RouteCalculationFinishedListener listener){
         this.origin = origin;
         this.dest = dest;

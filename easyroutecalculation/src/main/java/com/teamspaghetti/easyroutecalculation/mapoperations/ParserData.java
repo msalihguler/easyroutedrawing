@@ -29,6 +29,7 @@ public class ParserData extends AsyncTask<GoogleMap,String,PolylineOptions> {
     PolylineOptions polylineOptions;
     Boolean isLast;
     RouteCalculationFinishedListener listener;
+
     public ParserData(String route,Context context,PolylineOptions polylineOptions,Boolean isLast,RouteCalculationFinishedListener listener){
         this.route = route;
         this.context = context;

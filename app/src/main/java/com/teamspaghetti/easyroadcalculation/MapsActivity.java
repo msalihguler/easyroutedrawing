@@ -39,17 +39,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng samsun = new LatLng(41.15,36.22);
         LatLng sinop = new LatLng(42.,35.11);
 
-        mMap.addMarker(new MarkerOptions().position(samsun));
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ankara,6.0f));
-        easyRouteCalculation.addLocation(samsun);
-        easyRouteCalculation.addLocation(sinop);
-        easyRouteCalculation.addLocation(istanbul);
-        easyRouteCalculation.addLocation(izmir);
-        easyRouteCalculation.addLocation(mugla);
-        easyRouteCalculation.addLocation(antalya);
-        easyRouteCalculation.addLocation(ankara);
-
-        easyRouteCalculation.calculateRouteForMultiplePositions();
     }
     @Override
     protected void onResume() {
