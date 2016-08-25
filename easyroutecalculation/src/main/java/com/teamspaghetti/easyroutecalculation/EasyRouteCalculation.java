@@ -30,6 +30,16 @@ import java.util.concurrent.Future;
 
 public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculationFinishedListener {
 
+    /*
+    *       Easy Route Calculation library is a library that i aimed to ease people's effort on maps
+    *       in operations like, calculating the route, getting distance between two points, getting
+    *       the duration between two points. It solves this issue in one line of code.
+    *
+    *       We have two listeners LocationReadyCallback,RouteCalculationFinishedListener which is there for
+    *       to notify us on this occations.
+    *
+    * */
+
     CurrentLocationProvider provider;
     Boolean isLocationReady = false;
     GoogleMap map;
@@ -37,6 +47,11 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
     Boolean gotoMyLocationEnabled = false;
     List<LatLng> locations;
     ProgressDialog progressDialog;
+
+    /*
+    *       We do not need map instance for calculating distance and duration.
+    *       Therefore only context value will be enough for this calculations.
+    * */
 
     public EasyRouteCalculation(Context context){
         if(isGPSEnabled(context)) {
@@ -51,6 +66,10 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
         }
     }
 
+    /*
+    *       We need our map instance so we can draw route between points provided.
+    * */
+
     public EasyRouteCalculation(Context context, GoogleMap map){
         if(isGPSEnabled(context)) {
             _context = context;
@@ -62,6 +81,12 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
         else
             createDialogForOpeningGPS(context);
     }
+
+    /*
+    *       'calculateRouteFromMyLocation' method is created to help for calculating the route
+    *       from current location to destination
+    *       In this method you are able to pick travel mode, line color and width on the map
+    * */
 
     public void calculateRouteFromMyLocation(LatLng targetLocation){
         if(getCurrentLocation()!=null)
@@ -98,6 +123,12 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
             Toast.makeText(_context,"Location is not ready yet",Toast.LENGTH_SHORT).show();
     }
 
+    /*
+    *      'calculateRouteBetweenTwoPoints' is here for calculating the distance between two points
+    *      In this method you are able to pick travel mode, line color and width on the map
+    *
+    * */
+
     public void calculateRouteBetweenTwoPoints(LatLng startLocation,LatLng targetLocation){
         calculateRouteBetweenTwoLocations(startLocation,targetLocation,Color.RED,5,TravelMode.WALKING);
     }
@@ -128,14 +159,28 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
         }
     }
 
+    /*
+    *       Method to check whether gps is enabled or not
+    *
+    * */
 
     public boolean isGPSEnabled(Context context){
         return Utils.isGPSEnabled(context);
     }
 
+    /*
+    *       This method creates a dialog for opening a map if gps is not enabled or somewhere else.
+    *
+    * */
+
     public void createDialogForOpeningGPS(Context context) {
         Utils.createDialogForOpeningGPS(context);
     }
+
+    /*
+    *       Get current location if the location is ready.
+    *
+    * */
 
     public LatLng getCurrentLocation(){
         if(isLocationReady) {
@@ -144,6 +189,10 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
             return null;
         }
     }
+
+    /*
+    *       This method is called when current location is ready.
+    * */
 
     @Override
     public void locationReadyCallback(Boolean isReady) {
@@ -156,9 +205,18 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
 
     }
 
+    /*
+    *   This method is centering your current location when needed.
+    * */
+
     public void gotoMyLocation(Boolean isEnabled){
         gotoMyLocationEnabled = isEnabled;
     }
+
+    /*
+    *       Getting distance between points in km based.
+    *
+    * */
 
     public String getDistanceBetweenPoints(LatLng startLocation,LatLng targetLocation,String mode) throws ExecutionException, InterruptedException {
         final CalculateRouteBetweenPoints crbp = new CalculateRouteBetweenPoints(startLocation,targetLocation,_context,mode,true,this);
@@ -188,6 +246,11 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
         }
     }
 
+    /*
+    *   This method is called when we want to get duration between points
+    *
+    * */
+
     public String getDurationBetweenTwoPoints(LatLng startLocation,LatLng targetLocation,String mode) {
         final CalculateRouteBetweenPoints crbp = new CalculateRouteBetweenPoints(startLocation,targetLocation,_context,mode,true,this);
         final String url = crbp.prepareAddress();
@@ -216,6 +279,12 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
             return getDurationBetweenTwoPoints(startLocation,targetLocation,TravelMode.WALKING);
     }
 
+    /*
+    *       For multiple locations and creating a route we are using 'addLocation' to add one location
+    *       and for deleting location we use 'deleteLocation' and 'calculateRouteForMultiplePositions'
+    *       for calculating route between them.
+    * */
+
     public void addLocation(LatLng latLng){
         locations.add(latLng);
     }
@@ -233,23 +302,31 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
     }
 
     public void calculateRouteForMultiplePositions() {
-        calculateRouteForMultiplePositions(TravelMode.WALKING);
+        calculateRouteForMultiplePositions(TravelMode.WALKING,Color.RED,5);
     }
-
-    public void calculateRouteForMultiplePositions(String travelMode){
+    public void calculateRouteForMultiplePositions(String travelMode) {
+        calculateRouteForMultiplePositions(travelMode,Color.RED,5);
+    }
+    public void calculateRouteForMultiplePositions(int lineColor) {
+        calculateRouteForMultiplePositions(TravelMode.WALKING,lineColor,5);
+    }
+    public void calculateRouteForMultiplePositions(int lineColor,int lineWidth) {
+        calculateRouteForMultiplePositions(TravelMode.WALKING,lineColor,lineWidth);
+    }
+    public void calculateRouteForMultiplePositions(String travelMode,int lineColor,int lineWidth){
         if (locations.size() > 0) {
             if (locations.size() == 1) {
-            Toast.makeText(_context, "Location size must be greater than zero", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, "Location size must be greater than zero", Toast.LENGTH_SHORT).show();
             } else if (locations.size() == 2) {
-            calculateRouteBetweenTwoPoints(locations.get(0), locations.get(1));
+                calculateRouteBetweenTwoLocations(locations.get(0), locations.get(1),lineColor,lineWidth,travelMode);
             } else {
                 progressDialog.setMessage("Creating route!");
                 progressDialog.show();
                 for(int i = 0;i<locations.size()-1;i++){
                     if(i==locations.size()-2)
-                        calculateRouteBetweenMultiplePoints(locations.get(i),locations.get(i+1),travelMode,true);
+                        calculateRouteBetweenMultiplePoints(locations.get(i),locations.get(i+1),lineColor,lineWidth,travelMode,true);
                     else
-                        calculateRouteBetweenMultiplePoints(locations.get(i),locations.get(i+1),travelMode,false);
+                        calculateRouteBetweenMultiplePoints(locations.get(i),locations.get(i+1),lineColor,lineWidth,travelMode,false);
                 }
             }
         }

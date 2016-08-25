@@ -24,6 +24,13 @@ import com.teamspaghetti.easyroutecalculation.listeners.LocationReadyCallback;
  */
 public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
+    /*
+    *       With we try to retrieve current location we are using GoogleApiClient to start a location
+    *       service to retrieve current location and change it when it changes. This method triggers
+    *       the interface and send data.
+    *
+    * */
+
     private GoogleApiClient mGoogleApiClient;
     private Location mLocation;
     private LocationManager locationManager;
@@ -103,6 +110,7 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
 
     @Override
     public void onLocationChanged(Location location) {
+        setLocation(new LatLng(location.getLatitude(),location.getLongitude()));
     }
     protected void startLocationUpdates() {
 

@@ -24,6 +24,12 @@ import java.net.URL;
  */
 public class CalculateRouteBetweenPoints {
 
+    /*
+    *       In 'prepareAddress' we are creating a url to download our information for the route.
+    *       In 'getDirectionsUrl' we are triggering an asynctask to download a json file for route.
+    *
+    * */
+
     GoogleMap googleMap;
     LatLng origin,dest;
     Context context;
@@ -84,6 +90,7 @@ public class CalculateRouteBetweenPoints {
 
         return url;
     }
+
     // Fetches data from url passed
     public class DownloadTask extends AsyncTask<String, Void, String> {
 
