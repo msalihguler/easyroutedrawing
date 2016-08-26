@@ -38,8 +38,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng mugla = new LatLng(37.15,28.22);
         LatLng samsun = new LatLng(41.15,36.22);
         LatLng sinop = new LatLng(42.,35.11);
-
+        easyRouteCalculation.calculateRouteBetweenTwoPoints(ankara,istanbul);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
