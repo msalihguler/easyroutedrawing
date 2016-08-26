@@ -181,6 +181,10 @@ For calculating route for multiple location
       
       easyRouteCalculation.deleteAllLocations();
   ```
+#TODO
+
+* Add different language support
+  
   
 # Author 
   
