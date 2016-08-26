@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">EasyRouteCalculation</string>
+    <string name="location_not_found">Location not Found!</string>
+    <string name="location_not_ready">Location not Ready!</string>
+    <string name="creating_route_message">Creating route!</string>
+    <string name="single_location_error">You should add more than one location!</string>
+    <string name="gps_disabled_message">Your GPS is turned off, would you like to open it?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

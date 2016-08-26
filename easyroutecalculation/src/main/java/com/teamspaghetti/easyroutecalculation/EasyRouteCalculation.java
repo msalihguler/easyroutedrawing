@@ -92,35 +92,35 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
         if(getCurrentLocation()!=null)
             calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,Color.RED,5,TravelMode.WALKING);
         else
-            Toast.makeText(_context,"Location is not ready yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context,_context.getResources().getString(R.string.location_not_ready),Toast.LENGTH_SHORT).show();
     }
 
     public void calculateRouteFromMyLocation(LatLng targetLocation,String travelMode){
         if(getCurrentLocation()!=null)
             calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,Color.RED,5,travelMode);
         else
-            Toast.makeText(_context,"Location is not ready yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context,_context.getResources().getString(R.string.location_not_ready),Toast.LENGTH_SHORT).show();
     }
 
     public void calculateRouteFromMyLocation(LatLng targetLocation,int lineColor,String travelMode){
         if (getCurrentLocation()!=null)
             calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,lineColor,5,travelMode);
         else
-            Toast.makeText(_context,"Location is not ready yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context,_context.getResources().getString(R.string.location_not_ready),Toast.LENGTH_SHORT).show();
     }
 
     public void calculateRouteFromMyLocation(LatLng targetLocation,int lineColor){
         if (getCurrentLocation()!=null)
             calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,lineColor,5,TravelMode.WALKING);
         else
-            Toast.makeText(_context,"Location is not ready yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context,_context.getResources().getString(R.string.location_not_ready),Toast.LENGTH_SHORT).show();
     }
 
     public void calculateRouteFromMyLocation(LatLng targetLocation,int lineColor,int lineWidth){
         if(getCurrentLocation()!=null)
             calculateRouteBetweenTwoLocations(getCurrentLocation(),targetLocation,lineColor,lineWidth,TravelMode.WALKING);
         else
-            Toast.makeText(_context,"Location is not ready yet",Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context,_context.getResources().getString(R.string.location_not_ready),Toast.LENGTH_SHORT).show();
     }
 
     /*
@@ -151,7 +151,7 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
 
     private void calculateRouteBetweenTwoLocations(LatLng startLocation, LatLng targetLocation,int lineColor,int lineWidth,String travelMode){
         try {
-            progressDialog.setMessage("Creating route!");
+            progressDialog.setMessage(_context.getResources().getString(R.string.creating_route_message));
             progressDialog.show();
             new CalculateRouteBetweenPoints(map,startLocation,targetLocation,_context,lineColor,lineWidth,travelMode,true,this).getDirectionsUrl();
         } catch (IOException e) {
@@ -316,11 +316,11 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
     public void calculateRouteForMultiplePositions(String travelMode,int lineColor,int lineWidth){
         if (locations.size() > 0) {
             if (locations.size() == 1) {
-                Toast.makeText(_context, "Location size must be greater than zero", Toast.LENGTH_SHORT).show();
+                Toast.makeText(_context, _context.getResources().getString(R.string.single_location_error), Toast.LENGTH_SHORT).show();
             } else if (locations.size() == 2) {
                 calculateRouteBetweenTwoLocations(locations.get(0), locations.get(1),lineColor,lineWidth,travelMode);
             } else {
-                progressDialog.setMessage("Creating route!");
+                progressDialog.setMessage(_context.getResources().getString(R.string.creating_route_message));
                 progressDialog.show();
                 for(int i = 0;i<locations.size()-1;i++){
                     if(i==locations.size()-2)
@@ -342,7 +342,7 @@ public class EasyRouteCalculation implements LocationReadyCallback,RouteCalculat
     }
     private void calculateRouteBetweenMultiplePoints(LatLng startLocation, LatLng targetLocation,int lineColor,int lineWidth,String travelMode,boolean isLast){
         try {
-            progressDialog.setMessage("Creating route!");
+            progressDialog.setMessage(_context.getResources().getString(R.string.creating_route_message));
             progressDialog.show();
             new CalculateRouteBetweenPoints(map,startLocation,targetLocation,_context,lineColor,lineWidth,travelMode,isLast,this).getDirectionsUrl();
         } catch (IOException e) {

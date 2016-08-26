@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="location_not_found">Konum bulunamadı!</string>
+    <string name="location_not_ready">Konum hazır değil!</string>
+    <string name="creating_route_message">Rota oluşturuluyor!</string>
+    <string name="single_location_error">Birden fazla konum eklemelisiniz!</string>
+    <string name="gps_disabled_message">GPS'iniz kapalı görünüyor, açmak ister misiniz?</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+</resources>

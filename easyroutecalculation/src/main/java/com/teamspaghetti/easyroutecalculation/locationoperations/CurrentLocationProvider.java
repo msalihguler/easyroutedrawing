@@ -17,6 +17,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.teamspaghetti.easyroutecalculation.R;
 import com.teamspaghetti.easyroutecalculation.listeners.LocationReadyCallback;
 
 /**
@@ -97,7 +98,7 @@ public class CurrentLocationProvider  implements GoogleApiClient.ConnectionCallb
 
         } else {
 
-            Toast.makeText(_context, "Location not Detected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(_context, _context.getResources().getString(R.string.location_not_found), Toast.LENGTH_SHORT).show();
 
         }
     }
